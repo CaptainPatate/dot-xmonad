@@ -3,6 +3,7 @@ import Graphics.X11.Types
 import Graphics.X11.ExtraTypes.XF86
 import System.Taffybar.XMonadLog ( dbusLog )
 import XMonad
+import XMonad.Actions.CycleWindows
 import XMonad.Actions.GroupNavigation
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.DynamicLog
@@ -24,9 +25,11 @@ others = [ ((noModMask, xK_Print), spawn "sleep 0.2; scrot -s -e 'xclip -t image
          , ((mod4Mask, xK_F7), spawn "slock")
          , ((mod4Mask .|. shiftMask, xK_F7), spawn "slock /home/amaury/.local/bin/suspend.sh")]
 
+cycleWindows = [ ((mod4Mask .|. controlMask, xK_k), cycleRecentWindows [xK_Super_L, xK_Control_L] xK_k xK_k) ]
+
 historyKeys = [ ((mod1Mask, xK_Tab), nextMatch History (return True))]
 
-myKeys = volumeKeys ++ backlightKeys ++ mediaKeys ++ others ++ historyKeys
+myKeys = volumeKeys ++ backlightKeys ++ mediaKeys ++ others ++ historyKeys ++ cycleWindows
 
 main = do
   client <- connectSession
