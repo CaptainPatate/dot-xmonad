@@ -8,6 +8,8 @@ import XMonad.Actions.GroupNavigation
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
+import XMonad.Layout
+import XMonad.Layout.Maximize
 import XMonad.Util.EZConfig
 
 volumeKeys = [ ((noModMask, xF86XK_AudioRaiseVolume), spawn "pactl set-sink-volume 0 +1.5%")
@@ -23,13 +25,28 @@ mediaKeys = [ ((noModMask, xF86XK_Tools), spawn "xdotool key XF86AudioPlay")
 others = [ ((noModMask, xK_Print), spawn "sleep 0.2; scrot -s -e 'xclip -t image/png -selection clipboard $f && rm -f $f'")
          , ((shiftMask, xF86XK_MonBrightnessUp), spawn "pkill -USR1 redshift")
          , ((mod4Mask, xK_F7), spawn "slock")
-         , ((mod4Mask .|. shiftMask, xK_F7), spawn "slock /home/amaury/.local/bin/suspend.sh")]
+         , ((mod4Mask .|. shiftMask, xK_F7), spawn "slock /home/amaury/.local/bin/suspend.sh")
+         , ((mod4Mask, xK_f), withFocused (sendMessage . maximizeRestore))]
 
 cycleWindows = [ ((mod4Mask .|. controlMask, xK_k), cycleRecentWindows [xK_Super_L, xK_Control_L] xK_k xK_k) ]
 
 historyKeys = [ ((mod1Mask, xK_Tab), nextMatch History (return True))]
 
 myKeys = volumeKeys ++ backlightKeys ++ mediaKeys ++ others ++ historyKeys ++ cycleWindows
+
+maximizedDefaultLayout = maximize(tiled) ||| maximize(Mirror tiled) ||| Full
+  where
+     -- default tiling algorithm partitions the screen into two panes
+     tiled   = Tall nmaster delta ratio
+
+     -- The default number of windows in the master pane
+     nmaster = 1
+
+     -- Default proportion of screen occupied by master pane
+     ratio   = 1/2
+
+     -- Percent of screen to increment by when resizing panes
+     delta   = 3/100
 
 main = do
   client <- connectSession
@@ -38,4 +55,5 @@ main = do
                , modMask = mod4Mask
                , terminal = "xterm"
                , startupHook = setWMName "LG3D"
+               , layoutHook = maximizedDefaultLayout
                } `additionalKeys` myKeys
