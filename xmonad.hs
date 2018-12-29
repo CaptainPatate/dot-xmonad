@@ -25,7 +25,7 @@ mediaKeys = [ ((noModMask, xF86XK_Tools), spawn "xdotool key XF86AudioPlay")
 others = [ ((noModMask, xK_Print), spawn "sleep 0.2; scrot -s -e 'xclip -t image/png -selection clipboard $f && rm -f $f'")
          , ((shiftMask, xF86XK_MonBrightnessUp), spawn "pkill -USR1 redshift")
          , ((mod4Mask, xK_F7), spawn "slock")
-         , ((mod4Mask .|. shiftMask, xK_F7), spawn "slock /home/amaury/.local/bin/suspend.sh")
+         , ((mod4Mask .|. shiftMask, xK_F7), spawn "slock systemctl suspend")
          , ((mod4Mask, xK_f), withFocused (sendMessage . maximizeRestore))]
 
 cycleWindows = [ ((mod4Mask .|. controlMask, xK_k), cycleRecentWindows [xK_Super_L, xK_Control_L] xK_k xK_k) ]
