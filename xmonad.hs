@@ -1,7 +1,6 @@
 import DBus.Client
 import Graphics.X11.Types
 import Graphics.X11.ExtraTypes.XF86
-import System.Taffybar.XMonadLog ( dbusLog )
 import XMonad
 import XMonad.Actions.CycleWindows
 import XMonad.Actions.GroupNavigation
@@ -50,7 +49,7 @@ maximizedDefaultLayout = maximize(tiled) ||| maximize(Mirror tiled) ||| Full
 
 main = do
   client <- connectSession
-  xmonad $ def { logHook = dbusLog client >> historyHook
+  xmonad $ def { logHook = historyHook
                , manageHook = manageDocks
                , modMask = mod4Mask
                , terminal = "xterm"
