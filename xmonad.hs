@@ -26,7 +26,8 @@ mediaKeys = [ ((noModMask, xF86XK_Tools), spawn "xdotool key XF86AudioPlay")
             , ((noModMask, xF86XK_Search), spawn "xdotool key XF86AudioPrev")]
 others = [ ((noModMask, xK_Print), spawn "sleep 0.2; scrot -s -e 'xclip -t image/png -selection clipboard $f && rm -f $f'")
          , ((shiftMask, xF86XK_MonBrightnessUp), spawn "pkill -USR1 redshift")
-         , ((mod4Mask, xK_s), toggleLock lockToggleCmd (45*60)) ]
+         , ((mod4Mask, xK_s), toggleLock lockToggleCmd (45*60))
+         , ((mod4Mask, xK_F6), spawn "light-locker-command -l")]
 
 lockToggleCmd = "xautolock -toggle"
 toggleLock spawnAction delay = do
