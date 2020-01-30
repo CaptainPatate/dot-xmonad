@@ -53,7 +53,7 @@ shiftAndFollow = windows . (\i -> view i . shift i)
 
 main = do
   xmonad $ def { modMask = mod4Mask
-               , terminal = "urxvt"
+               , terminal = "xterm"
                , startupHook = setWMName "LG3D"
                , handleEventHook = toggleLockEventHook
                } `additionalKeys` myKeys
