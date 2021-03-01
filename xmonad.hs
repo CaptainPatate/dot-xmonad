@@ -7,6 +7,9 @@ import XMonad.Util.EZConfig
 import qualified XMonad.Util.ExtensibleState as XS
 import XMonad.Util.Timer
 import XMonad.Hooks.SetWMName
+import XMonad.Layout
+import XMonad.Layout.Maximize
+import XMonad.Layout.ThreeColumns
 import Graphics.X11.Types
 import Graphics.X11.ExtraTypes.XF86
 
@@ -18,7 +21,7 @@ volumeKeys = [ ((noModMask, xF86XK_AudioRaiseVolume), spawn "pactl set-sink-volu
              , ((noModMask, xF86XK_AudioLowerVolume), spawn "pactl set-sink-volume 0 -1.5%")
              , ((shiftMask, xF86XK_AudioRaiseVolume), spawn "pactl set-sink-volume 0 +5%")
              , ((shiftMask, xF86XK_AudioLowerVolume), spawn "pactl set-sink-volume 0 -5%")
-              , ((noModMask, xF86XK_AudioMute), spawn "pactl set-sink-mute 0 toggle")]
+             , ((noModMask, xF86XK_AudioMute), spawn "pactl set-sink-mute 0 toggle")]
 backlightKeys = [ ((noModMask, xF86XK_MonBrightnessDown), spawn "bash -lc dec_backlight")
                 , ((noModMask, xF86XK_MonBrightnessUp), spawn "bash -lc inc_backlight")]
 mediaKeys = [ ((noModMask, xF86XK_Tools), spawn "xdotool key XF86AudioPlay")
@@ -27,7 +30,9 @@ mediaKeys = [ ((noModMask, xF86XK_Tools), spawn "xdotool key XF86AudioPlay")
 others = [ ((noModMask, xK_Print), spawn "sleep 0.2; scrot -s -e 'xclip -t image/png -selection clipboard $f && rm -f $f'")
          , ((shiftMask, xF86XK_MonBrightnessUp), spawn "pkill -USR1 redshift")
          , ((mod4Mask, xK_s), toggleLock lockToggleCmd (45*60))
-         , ((mod4Mask, xK_F6), spawn "light-locker-command -l")]
+         , ((mod4Mask, xK_F6), spawn "light-locker-command -l")
+         , ((shiftMask .|. mod4Mask, xK_F6), spawn "systemctl suspend")
+         , ((mod4Mask, xK_f), withFocused (sendMessage . maximizeRestore))]
 
 lockToggleCmd = "xautolock -toggle"
 toggleLock spawnAction delay = do
@@ -51,9 +56,24 @@ myKeys = volumeKeys ++ backlightKeys ++ mediaKeys ++ others
 shiftAndFollow :: WorkspaceId -> X ()
 shiftAndFollow = windows . (\i -> view i . shift i)
 
+maximizedDefaultLayout = maximize(tiled) ||| Full ||| ThreeColMid 1 (3/100) (1/3)
+  where
+     -- default tiling algorithm partitions the screen into two panes
+     tiled   = Tall nmaster delta ratio
+
+     -- The default number of windows in the master pane
+     nmaster = 1
+
+     -- Default proportion of screen occupied by master pane
+     ratio   = 1/2
+
+     -- Percent of screen to increment by when resizing panes
+     delta   = 3/100
+
 main = do
   xmonad $ def { modMask = mod4Mask
                , terminal = "xterm"
                , startupHook = setWMName "LG3D"
                , handleEventHook = toggleLockEventHook
+               , layoutHook = maximizedDefaultLayout
                } `additionalKeys` myKeys
